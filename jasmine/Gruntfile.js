@@ -8,9 +8,23 @@ module.exports = function(grunt) {
                         specs: ['specs/*.js']
                     }
                 }
+            },
+            jslint: {
+                default: {
+                    src: [
+                        'modules/*',
+                        'specs/*'
+                    ],
+                    directives: {
+                        sloppy: true
+                    }
+                }
             }
         }
     );
 
     grunt.loadNpmTasks('grunt-contrib-jasmine');
+    grunt.loadNpmTasks('grunt-jslint');
+    
+    grunt.registerTask('default', ['jslint', 'jasmine']);
 };

@@ -12,5 +12,9 @@
   "devDependencies": {
     "grunt": "~0.4.1",
     "grunt-contrib-jasmine": "~0.5.2"
+  },
+  "dependencies": {
+    "grunt-jslint": "~1.1.1",
+    "dev": "~0.1.3"
   }
 }
