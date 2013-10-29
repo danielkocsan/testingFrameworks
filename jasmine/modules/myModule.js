@@ -1,3 +1,3 @@
-var MyModule = function () {};
+var MyModule = function () {return false; };
 
-MyModule.prototype.myMethod = function () {};
+MyModule.prototype.myMethod = function () {return false; };

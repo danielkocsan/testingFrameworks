@@ -28,4 +28,4 @@ EventPublisher.prototype.subscribe = function (eventName, moduleName, callback) 
 
     this.eventHandlers[eventName][moduleName].push(callback);
 };
-EventPublisher.prototype.unsubscribe = function () {};
+EventPublisher.prototype.unsubscribe = function () {return false; };
