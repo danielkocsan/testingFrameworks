@@ -5,7 +5,11 @@ module.exports = function(grunt) {
                 default: {
                     src: ['modules/*.js'],
                     options: {
-                        specs: ['specs/*.js']
+                        specs: ['specs/*.js'],
+                        junit: {
+                            path: 'reports',
+                            consolidate: true
+                        }
                     }
                 }
             },
