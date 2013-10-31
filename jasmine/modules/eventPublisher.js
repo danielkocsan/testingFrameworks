@@ -4,21 +4,32 @@ var EventPublisher = function (moduleName) {
 
 EventPublisher.prototype.eventHandlers = {};
 
-EventPublisher.prototype.publishEvents = function (moduleName, eventName) {
+EventPublisher.prototype.publishEvents = function (moduleName, eventName,params) {
     if (this.eventHandlers[eventName] !== undefined && Array.isArray(this.eventHandlers[eventName][moduleName])) {
         this.eventHandlers[eventName][moduleName].forEach(function (fn) {
-            fn(moduleName,eventName);
+            var args = [moduleName,eventName],
+                i = 0,
+                len = params.length;
+
+            for(; i < len; i++)
+            {
+                args.push(params[i]);
+            }
+            fn.apply(this,args);
         });
     }
 };
 
-EventPublisher.prototype.publish = function (eventName, cb) {
-    var that = this;
+EventPublisher.prototype.publish = function () {
+    var that = this,
+        eventName = arguments[0],
+        cb = arguments[arguments.length-1],
+        params = Array.prototype.slice.call(arguments,1,arguments.length);
 
     setTimeout(function () {
-        that.publishEvents(that.moduleName, eventName);
-        that.publishEvents(null, eventName);
-        that.publishEvents(that.moduleName, null);
+        that.publishEvents(that.moduleName, eventName,params);
+        that.publishEvents(null, eventName,params);
+        that.publishEvents(that.moduleName, null,params);
         if (typeof(cb) === "function") {
             cb();
         }
