@@ -78,7 +78,7 @@ describe(
             var eventName = 'testEvent',
                 mySpy = jasmine.createSpy('mySpy');
 
-            alphaInstanceUnderTest.subscribe(eventName, 'charlieModule', function () {});
+            alphaInstanceUnderTest.subscribe(eventName, 'charlieModule');
             charlieInstanceUnderTest.publish(eventName, mySpy);
             expect(mySpy.calls.length).toBe(0);
             jasmine.Clock.tick(1);
@@ -96,7 +96,7 @@ describe(
             expect(mySpy).toHaveBeenCalled();
         });
 
-        it('should pass moduleName to event handler',function(){
+        it('should pass moduleName to event handler', function () {
             var eventName = 'testEventName',
                 mySpy = jasmine.createSpy('mySpy');
 
@@ -107,7 +107,7 @@ describe(
 
         });
 
-        it('should pass eventName to event handler',function(){
+        it('should pass eventName to event handler', function () {
             var eventName = 'testEventName',
                 mySpy = jasmine.createSpy('mySpy');
 
@@ -118,12 +118,12 @@ describe(
 
         });
 
-        it('should pass additional parameters to event handler',function(){
+        it('should pass additional parameters to event handler', function () {
             var eventName = 'testEventName',
                 mySpy = jasmine.createSpy('mySpy');
 
             alphaInstanceUnderTest.subscribe(eventName, 'charlieModule', mySpy);
-            charlieInstanceUnderTest.publish(eventName,'param1','param2','param3');
+            charlieInstanceUnderTest.publish(eventName, 'param1', 'param2', 'param3');
             jasmine.Clock.tick(1);
             expect(mySpy.mostRecentCall.args[2]).toEqual('param1');
             expect(mySpy.mostRecentCall.args[3]).toEqual('param2');
@@ -131,7 +131,7 @@ describe(
 
         });
 
-        it('should not call event handlers on unsubscribed modules',function(){
+        it('should not call event handlers on unsubscribed modules', function () {
             var eventName = 'testEventName',
                 mySpy = jasmine.createSpy('mySpy');
 

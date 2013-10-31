@@ -1,3 +1,4 @@
+/*global setTimeout*/
 var EventPublisher = function (moduleName) {
     this.moduleName = moduleName;
 };
@@ -6,25 +7,26 @@ EventPublisher.prototype.eventHandlers = {};
 
 EventPublisher.prototype.publishEvents = function (moduleName, eventName, params) {
     var listeners,
-        args = [moduleName, eventName];
+        args = [moduleName, eventName],
+        i,
+        len;
 
-    for (var i = 0, len = params.length; i < len; i++) {
+    for (i = 0, len = params.length; i < len; i += 1) {
         args.push(params[i]);
     }
 
     if (this.eventHandlers[eventName] !== undefined && Array.isArray(this.eventHandlers[eventName][moduleName])) {
         listeners = this.eventHandlers[eventName][moduleName];
-        for (var i = 0, len = listeners.length; i < len; i++) {
-            if (typeof(listeners[i]) === "function") {
+        for (i = 0, len = listeners.length; i < len; i += 1) {
+            if (typeof listeners[i] === "function") {
                 listeners[i].apply(this, args);
             }
         }
     }
 };
 
-EventPublisher.prototype.publish = function () {
+EventPublisher.prototype.publish = function (eventName) {
     var that = this,
-        eventName = arguments[0],
         cb = arguments[arguments.length - 1],
         params = Array.prototype.slice.call(arguments, 1, arguments.length);
 
@@ -32,7 +34,7 @@ EventPublisher.prototype.publish = function () {
         that.publishEvents(that.moduleName, eventName, params);
         that.publishEvents(null, eventName, params);
         that.publishEvents(that.moduleName, null, params);
-        if (typeof(cb) === "function") {
+        if (typeof cb === "function") {
             cb();
         }
     }, 0);
