@@ -7,7 +7,7 @@ EventPublisher.prototype.eventHandlers = {};
 EventPublisher.prototype.publishEvents = function (moduleName, eventName) {
     if (this.eventHandlers[eventName] !== undefined && Array.isArray(this.eventHandlers[eventName][moduleName])) {
         this.eventHandlers[eventName][moduleName].forEach(function (fn) {
-            fn();
+            fn(moduleName,eventName);
         });
     }
 };

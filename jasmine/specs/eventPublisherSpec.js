@@ -105,7 +105,7 @@ describe(
             expect(mySpy).toHaveBeenCalled();
         });
 
-        it('should pass moduleName to event handler',function(){
+        it('should pass moduleName and eventName to event handler',function(){
             var eventName = 'testEventName',
                 mySpy = jasmine.createSpyObj('mySpy', ['myCallback']);
 
@@ -114,7 +114,7 @@ describe(
             charlieInstanceUnderTest.publish(eventName);
 
             jasmine.Clock.tick(1);
-            expect(mySpy.myCallback).toHaveBeenCalledWith('charlieModule');
+            expect(mySpy.myCallback).toHaveBeenCalledWith('charlieModule','testEventName');
 
         });
     }
