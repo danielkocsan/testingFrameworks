@@ -80,7 +80,6 @@ describe(
 
             alphaInstanceUnderTest.subscribe(eventName, 'charlieModule', function () {});
             charlieInstanceUnderTest.publish(eventName, mySpy);
-
             expect(mySpy.calls.length).toBe(0);
             jasmine.Clock.tick(1);
             expect(mySpy.calls.length).toBe(1);
@@ -92,7 +91,6 @@ describe(
 
             alphaInstanceUnderTest.subscribe(eventName, 'charlieModule', mySpy);
             charlieInstanceUnderTest.publish(eventName);
-
             expect(mySpy).not.toHaveBeenCalled();
             jasmine.Clock.tick(1);
             expect(mySpy).toHaveBeenCalled();
@@ -104,7 +102,6 @@ describe(
 
             alphaInstanceUnderTest.subscribe(eventName, 'charlieModule', mySpy);
             charlieInstanceUnderTest.publish(eventName);
-
             jasmine.Clock.tick(1);
             expect(mySpy.mostRecentCall.args[0]).toEqual('charlieModule');
 
@@ -116,7 +113,6 @@ describe(
 
             alphaInstanceUnderTest.subscribe(eventName, 'charlieModule', mySpy);
             charlieInstanceUnderTest.publish(eventName);
-
             jasmine.Clock.tick(1);
             expect(mySpy.mostRecentCall.args[1]).toEqual('testEventName');
 
@@ -128,12 +124,27 @@ describe(
 
             alphaInstanceUnderTest.subscribe(eventName, 'charlieModule', mySpy);
             charlieInstanceUnderTest.publish(eventName,'param1','param2','param3');
-
             jasmine.Clock.tick(1);
             expect(mySpy.mostRecentCall.args[2]).toEqual('param1');
             expect(mySpy.mostRecentCall.args[3]).toEqual('param2');
             expect(mySpy.mostRecentCall.args[4]).toEqual('param3');
 
+        });
+
+        it('should not call event handlers on unsubscribed modules',function(){
+            var eventName = 'testEventName',
+                mySpy = jasmine.createSpy('mySpy');
+
+            alphaInstanceUnderTest.subscribe(eventName, 'charlieModule', mySpy);
+            alphaInstanceUnderTest.subscribe(eventName, 'charlieModule', mySpy);
+            charlieInstanceUnderTest.publish(eventName);
+            jasmine.Clock.tick(1);
+            expect(mySpy.calls.length).toBe(2);
+
+            alphaInstanceUnderTest.unsubscribe(eventName, 'charlieModule');
+            charlieInstanceUnderTest.publish(eventName);
+            jasmine.Clock.tick(1);
+            expect(mySpy.calls.length).toBe(2);
         });
     }
 );

@@ -48,6 +48,8 @@ EventPublisher.prototype.subscribe = function (eventName, moduleName, callback) 
 
     this.eventHandlers[eventName][moduleName].push(callback);
 };
-EventPublisher.prototype.unsubscribe = function () {
-    return false;
+EventPublisher.prototype.unsubscribe = function (eventName, moduleName) {
+    if (this.eventHandlers[eventName] !== undefined && Array.isArray(this.eventHandlers[eventName][moduleName])) {
+        this.eventHandlers[eventName][moduleName] = null;
+    }
 };
