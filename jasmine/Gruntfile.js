@@ -9,7 +9,8 @@ module.exports = function(grunt) {
                         junit: {
                             path: 'reports',
                             consolidate: true
-                        }
+                        },
+                        keepRunner: true
                     }
                 }
             },
