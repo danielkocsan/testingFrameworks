@@ -12,10 +12,18 @@ EventPublisher.prototype.publishEvents = function (moduleName, eventName) {
     }
 };
 
-EventPublisher.prototype.publish = function (eventName) {
-    this.publishEvents(this.moduleName, eventName);
-    this.publishEvents(null, eventName);
-    this.publishEvents(this.moduleName, null);
+EventPublisher.prototype.publish = function (eventName, cb) {
+
+    setTimeout(function () {
+        this.publishEvents(this.moduleName, eventName);
+        this.publishEvents(null, eventName);
+        this.publishEvents(this.moduleName, null);
+        if (typeof(cb) === "function") {
+            cb();
+        }
+    }, 0);
+
+
 };
 EventPublisher.prototype.subscribe = function (eventName, moduleName, callback) {
     if (!this.eventHandlers[eventName]) {
@@ -28,4 +36,6 @@ EventPublisher.prototype.subscribe = function (eventName, moduleName, callback) 
 
     this.eventHandlers[eventName][moduleName].push(callback);
 };
-EventPublisher.prototype.unsubscribe = function () {return false; };
+EventPublisher.prototype.unsubscribe = function () {
+    return false;
+};
