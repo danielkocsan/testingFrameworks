@@ -7,6 +7,7 @@ describe(
             charlieInstanceUnderTest;
 
         beforeEach(function () {
+            jasmine.Clock.useMock();
             alphaInstanceUnderTest = new EventPublisher('alphaModule');
             bravoInstanceUnderTest = new EventPublisher('bravoModule');
             charlieInstanceUnderTest = new EventPublisher('charlieModule');
@@ -20,94 +21,101 @@ describe(
 
         it('calls the callback function when fired', function () {
             var eventName = 'testEventName',
-                mySpy = jasmine.createSpyObj('mySpy', ['myCallback']);
+                mySpy = jasmine.createSpy('mySpy');
 
-            alphaInstanceUnderTest.subscribe(eventName, 'alphaModule', mySpy.myCallback);
+            alphaInstanceUnderTest.subscribe(eventName, 'alphaModule', mySpy);
 
-            alphaInstanceUnderTest.publish(eventName, function () {
-                expect(mySpy.myCallback).toHaveBeenCalled();
-            });
+            alphaInstanceUnderTest.publish(eventName);
+            jasmine.Clock.tick(1);
+            expect(mySpy.calls.length).toEqual(1);
         });
 
         it('is able to specify subscribing to events by module names', function () {
             var eventName = 'testEvent',
-                mySpy = jasmine.createSpyObj('mySpy', ['myCallback'])
-            cb = function () {
-                expect(mySpy.myCallback.calls.length).toEqual(1);
-            };
+                mySpy = jasmine.createSpy('mySpy');
 
-            alphaInstanceUnderTest.subscribe(eventName, 'alphaModule', mySpy.myCallback);
+            alphaInstanceUnderTest.subscribe(eventName, 'alphaModule', mySpy);
 
-            alphaInstanceUnderTest.publish(eventName, cb);
-            bravoInstanceUnderTest.publish(eventName, cb);
+            alphaInstanceUnderTest.publish(eventName);
+            bravoInstanceUnderTest.publish(eventName);
+            jasmine.Clock.tick(1);
+            expect(mySpy.calls.length).toEqual(1);
         });
 
         it('is able to subscribe to events by event name only', function () {
             var eventName = 'testEvent',
-                mySpy = jasmine.createSpyObj('mySpy', ['myCallback']),
-                cb = function(){
-                    expect(mySpy.myCallback.calls.length).toEqual(2);
-                };
+                mySpy = jasmine.createSpy('mySpy');
 
-            alphaInstanceUnderTest.subscribe(eventName, null, mySpy.myCallback);
+            alphaInstanceUnderTest.subscribe(eventName, null, mySpy);
 
-            alphaInstanceUnderTest.publish(eventName,cb);
-            bravoInstanceUnderTest.publish(eventName,cb);
+            alphaInstanceUnderTest.publish(eventName);
+            bravoInstanceUnderTest.publish(eventName);
+            jasmine.Clock.tick(1);
+            expect(mySpy.calls.length).toEqual(2);
         });
 
         it('is able to subscribe to events by module name only', function () {
             var eventName = 'testEvent',
-                mySpy = jasmine.createSpyObj('mySpy', ['myCallback']),
-                cb = function(){
-                    expect(mySpy.myCallback.calls.length).toEqual(1);
-                };
+                mySpy = jasmine.createSpy('mySpy');
 
-            alphaInstanceUnderTest.subscribe(null, 'alphaModule', mySpy.myCallback);
+            alphaInstanceUnderTest.subscribe(null, 'alphaModule', mySpy);
 
-            alphaInstanceUnderTest.publish(eventName,cb);
-            bravoInstanceUnderTest.publish(eventName,cb);
+            alphaInstanceUnderTest.publish(eventName);
+            bravoInstanceUnderTest.publish(eventName);
+            jasmine.Clock.tick(1);
+            expect(mySpy.calls.length).toEqual(1);
         });
 
         it('is able to subscribe multiple times to events', function () {
             var eventName = 'testEvent',
-                mySpy = jasmine.createSpyObj('mySpy', ['myCallback']);
+                mySpy = jasmine.createSpy('mySpy');
 
-            alphaInstanceUnderTest.subscribe(eventName, null, mySpy.myCallback);
-            alphaInstanceUnderTest.subscribe(eventName, null, mySpy.myCallback);
-            bravoInstanceUnderTest.subscribe(eventName, null, mySpy.myCallback);
+            alphaInstanceUnderTest.subscribe(eventName, null, mySpy);
+            alphaInstanceUnderTest.subscribe(eventName, null, mySpy);
+            bravoInstanceUnderTest.subscribe(eventName, null, mySpy);
 
-            charlieInstanceUnderTest.publish(eventName, function () {
-                expect(mySpy.myCallback.calls.length).toEqual(3);
-            });
+            charlieInstanceUnderTest.publish(eventName);
+            jasmine.Clock.tick(1);
+            expect(mySpy.calls.length).toEqual(3);
         });
 
         it('should execute callback on publish', function () {
             var eventName = 'testEvent',
-                callBackExecuted = false;
+                mySpy = jasmine.createSpy('mySpy');
 
-            alphaInstanceUnderTest.subscribe(eventName, 'alphaModule', function () {
-            });
+            alphaInstanceUnderTest.subscribe(eventName, 'charlieModule', function () {});
 
-            alphaInstanceUnderTest.publish(eventName, function () {
-                callBackExecuted = true;
-            });
+            charlieInstanceUnderTest.publish(eventName, mySpy);
 
-            setTimeout(function () {
-                expect(callBackExecuted).toBeTruthy();
-            }, 10);
+            expect(mySpy.calls.length).toBe(0);
+            jasmine.Clock.tick(1);
+            expect(mySpy.calls.length).toBe(1);
         });
 
         it('should be asynchronous', function () {
             var eventName = 'testEvent',
-                mySpy = jasmine.createSpyObj('mySpy', ['myCallback']);
+                mySpy = jasmine.createSpy('mySpy');
 
-            alphaInstanceUnderTest.subscribe(eventName, null, mySpy.myCallback);
-            alphaInstanceUnderTest.subscribe(eventName, null, mySpy.myCallback);
-            bravoInstanceUnderTest.subscribe(eventName, null, mySpy.myCallback);
+            alphaInstanceUnderTest.subscribe(eventName, 'charlieModule', mySpy);
 
             charlieInstanceUnderTest.publish(eventName);
 
-            expect(mySpy.myCallback.calls.length).toBeLessThan(3);
+            expect(mySpy).not.toHaveBeenCalled();
+            jasmine.Clock.tick(1);
+            expect(mySpy).toHaveBeenCalled();
+        });
+
+        it('should pass moduleName to event handler',function(){
+            var eventName = 'testEventName',
+                mySpy = jasmine.createSpyObj('mySpy', ['myCallback']);
+
+            alphaInstanceUnderTest.subscribe(eventName, 'charlieModule', mySpy.myCallback);
+
+            charlieInstanceUnderTest.publish(eventName);
+
+            jasmine.Clock.tick(1);
+            expect(mySpy.myCallback).toHaveBeenCalledWith('charlieModule');
+
         });
     }
 );

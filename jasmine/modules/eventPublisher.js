@@ -13,11 +13,12 @@ EventPublisher.prototype.publishEvents = function (moduleName, eventName) {
 };
 
 EventPublisher.prototype.publish = function (eventName, cb) {
+    var that = this;
 
     setTimeout(function () {
-        this.publishEvents(this.moduleName, eventName);
-        this.publishEvents(null, eventName);
-        this.publishEvents(this.moduleName, null);
+        that.publishEvents(that.moduleName, eventName);
+        that.publishEvents(null, eventName);
+        that.publishEvents(that.moduleName, null);
         if (typeof(cb) === "function") {
             cb();
         }
